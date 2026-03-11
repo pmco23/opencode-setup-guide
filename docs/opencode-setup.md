@@ -73,7 +73,7 @@ Six MCP servers are configured globally. Each serves a distinct purpose.
 
 ### sequential-thinking
 **What:** Forces the model to reason step-by-step before acting.
-**When:** Complex multi-step tasks (implementing features, refactoring, debugging) where rushing leads to mistakes. Works best combined with OpenSpec workflows.
+**When:** Complex multi-step tasks (implementing features, refactoring, debugging) where rushing leads to mistakes. Works best combined with spec-driven workflows.
 ```json
 {
   "type": "local",
@@ -120,11 +120,18 @@ Good candidates:
 
 ---
 
-## OpenSpec Integration
+## Spec-Tool Integration
 
-This setup is designed to work alongside [OpenSpec](https://github.com/Fission-AI/OpenSpec) (spec-driven development). See [openspec-install.md](./openspec-install.md) for the installation guide and [openspec-commands.md](./openspec-commands.md) for the full command reference.
+This setup works alongside two spec-driven development tools. Choose the one that fits your stack:
+
+| Tool | Install guide | Command reference |
+|---|---|---|
+| [OpenSpec](https://github.com/Fission-AI/OpenSpec) | [openspec-install.md](./openspec-install.md) | [openspec-commands.md](./openspec-commands.md) |
+| [Spec-Kit](https://github.com/github/spec-kit) | [speckit-install.md](./speckit-install.md) | [speckit-commands.md](./speckit-commands.md) |
 
 ### Recommended workflow — new feature
+
+#### OpenSpec
 
 ```
 1. /repo-overview          → understand the codebase before writing specs
@@ -135,9 +142,22 @@ This setup is designed to work alongside [OpenSpec](https://github.com/Fission-A
 6. /opsx:archive           → archive the completed change
 ```
 
+#### Spec-Kit
+
+```
+1. /repo-overview          → understand the codebase before writing specs
+2. /speckit.constitution   → set up or update .specify/memory/constitution.md
+3. /speckit.specify        → define requirements → spec.md
+4. /speckit.plan           → technical plan → plan.md, data-model.md, contracts/
+5. /speckit.tasks          → generate tasks.md
+6. /c7-how or /gh-docs     → research before implementing
+7. /speckit.implement      → implement (clear context first)
+8. spec-review-sk skill   → verify implementation against tasks.md + code audit
+```
+
 ### Recommended workflow — brownfield feature
 
-OpenSpec has no built-in codebase ingestion step. Our `repo-*` commands fill that gap before the spec phase:
+Neither tool has a built-in codebase ingestion step. Our `repo-*` commands fill that gap before the spec phase:
 
 ```
 1. /repo-overview          → map existing structure, tech stack, entry points
@@ -145,6 +165,11 @@ OpenSpec has no built-in codebase ingestion step. Our `repo-*` commands fill tha
 3. /repo-routes            → map existing endpoints to avoid collisions
 4. /repo-models            → understand the data model before changing it
 5. /mem-save               → save key findings (patterns, conventions, gotchas)
+```
+
+#### OpenSpec
+
+```
 6. /opsx:propose           → write spec informed by what actually exists
 7. /opsx:apply             → implement
 8. spec-review skill      → verify + code audit
@@ -153,14 +178,32 @@ OpenSpec has no built-in codebase ingestion step. Our `repo-*` commands fill tha
 
 See [Workflow 5](./opencode-workflows.md#5-adding-a-feature-to-an-existing-codebase-brownfield) for the full step-by-step including `config.yaml` seeding.
 
-### Recommended workflow — bug fix
-
-For bugs, skip the full spec pipeline. Use explore to diagnose, then a minimal propose:
+#### Spec-Kit
 
 ```
-1. /opsx:explore           → investigate the bug, trace the root cause
+6. /speckit.constitution   → seed .specify/memory/constitution.md with what you found
+7. /speckit.specify        → write spec informed by what actually exists
+8. /speckit.plan           → technical plan
+9. /speckit.tasks          → tasks.md
+10. /speckit.implement     → implement
+11. spec-review-sk skill  → verify + code audit
+```
+
+See [Workflow 5](./opencode-workflows.md#5-adding-a-feature-to-an-existing-codebase-brownfield) for the full step-by-step including constitution seeding.
+
+### Recommended workflow — bug fix
+
+For bugs, skip the full spec pipeline. Diagnose first, then run a minimal spec:
+
+```
+1. Investigate             → trace the root cause (explore or plain conversation)
 2. /ast-find <symbol>      → find all call sites and definitions involved
 3. /repo-errors            → check if related error handling issues exist nearby
+```
+
+#### OpenSpec
+
+```
 4. /opsx:propose fix-<name> → minimal proposal: what's wrong, what the fix is, tasks
 5. /opsx:apply             → fix
 6. /opsx:archive
@@ -170,9 +213,19 @@ Skip `/opsx:verify` for small fixes unless the bug touched shared infrastructure
 
 See [Workflow 6](./opencode-workflows.md#6-bug-fix-with-openspec) for the full step-by-step.
 
+#### Spec-Kit
+
+```
+4. /speckit.specify        → narrow scope: just the fix (1–3 tasks)
+5. /speckit.tasks          → minimal tasks.md
+6. /speckit.implement      → fix
+```
+
+See [Workflow 6](./opencode-workflows.md#6-bug-fix-with-spec-kit) for the full step-by-step.
+
 ### Context hygiene
 
-OpenSpec recommends a clean context window before `/opsx:apply`. The heavy MCP tools (repomix, ast-grep) add significant tokens. Since all `repo-*` commands use `subtask: true`, they run in isolated contexts and don't pollute your implementation session.
+Both tools recommend a clean context window before implementing. The heavy MCP tools (repomix, ast-grep) add significant tokens. Since all `repo-*` commands use `subtask: true`, they run in isolated contexts and don't pollute your implementation session.
 
 `mem-*` commands use `subtask: false` intentionally — recalled memory needs to be visible in the active session.
 
@@ -187,7 +240,8 @@ Our global `AGENTS.md` encodes:
 - **Research**: use `context7` for official docs, `gh_grep` for real-world patterns
 - **Codebase exploration**: use `repomix` for broad discovery, `ast-grep` for precise queries
 - **OpenSpec**: always run `repo-*` commands and seed `config.yaml` before `/opsx:propose` on brownfield; use lightweight pipeline for bugs
-- **After `/opsx:apply`**: load the `spec-review` skill before archiving
+- **Spec-Kit**: always run `repo-*` commands and seed `constitution.md` before `/speckit.specify` on brownfield; use lightweight pipeline for bugs
+- **After implementing**: load the appropriate review skill (`spec-review` for OpenSpec, `spec-review-sk` for Spec-Kit)
 - **Memory**: save decisions, conventions, and gotchas whenever discovered
 
 ```
@@ -195,7 +249,10 @@ Our global `AGENTS.md` encodes:
 AGENTS.md                       ← project rules (committed to Git, shared with team)
 ```
 
-The project `AGENTS.md` is for team-shared conventions. The global one is for your personal workflow defaults.
+The project `AGENTS.md` is for team-shared conventions. The global one is for your personal workflow defaults. Copy the matching template from `agents/` in this repo:
+
+- OpenSpec projects: `agents/openspec.md` → `AGENTS.md`
+- Spec-Kit projects: `agents/speckit.md` → `AGENTS.md`
 
 ### AGENTS.md — project tip
 
@@ -208,9 +265,11 @@ When implementing a feature, refactoring, or solving a bug with more than
 When you need to search docs, use context7 tools.
 ```
 
-### openspec/config.yaml tip
+### Project config tips
 
-Use the project config to encode architectural constraints that OpenSpec should respect in every proposal and design it generates. This fills the role that Spec-Kit's `constitution.md` plays:
+Both tools use a project-level config file to encode architectural constraints. Fill these in before generating artifacts so specs and tasks reflect your actual architecture.
+
+#### OpenSpec — openspec/config.yaml
 
 ```yaml
 # openspec/config.yaml
@@ -222,7 +281,19 @@ context: |
   Tests use Vitest. Every new module needs a corresponding test file.
 ```
 
-The agent reads this before generating any artifact, so the design and tasks will reflect your actual architecture.
+#### Spec-Kit — .specify/memory/constitution.md
+
+```md
+# Project Constitution
+
+## Stack
+TypeScript with strict mode. Input validation uses Zod.
+API handlers follow the repository pattern — no direct DB access in routes.
+Authentication is JWT-based via src/middleware/auth.ts.
+All database access goes through src/db/repositories/.
+Tests use Vitest. Every new module needs a corresponding test file.
+State management uses Zustand. Styling uses Tailwind CSS.
+```
 
 ---
 
@@ -231,9 +302,23 @@ The agent reads this before generating any artifact, so the design and tasks wil
 ```
 ~/.config/opencode/opencode.json      ← global config: MCPs + commands (all projects)
 ~/.config/opencode/AGENTS.md          ← global rules: personal workflow defaults
-~/.config/opencode/skills/<name>/     ← global skills (e.g. spec-review)
+~/.config/opencode/skills/<name>/     ← global skills (symlinked from this repo)
 
 .opencode/opencode.json               ← per-project config (overrides global)
 AGENTS.md                             ← per-project rules (committed to Git)
 .opencode/skills/<name>/              ← per-project skills
 ```
+
+### Installing skills from this repo
+
+The skill source files live in `skills/` in this repo. Symlink them into the global skills directory so OpenCode discovers them:
+
+```bash
+# OpenSpec users
+ln -sfn "$(pwd)/skills/spec-review" ~/.config/opencode/skills/spec-review
+
+# Spec-Kit users
+ln -sfn "$(pwd)/skills/spec-review-sk" ~/.config/opencode/skills/spec-review-sk
+```
+
+This keeps the repo as the single source of truth — `git pull` updates the skills automatically.

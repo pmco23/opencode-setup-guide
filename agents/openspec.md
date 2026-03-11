@@ -42,14 +42,14 @@ Before running `/opsx:propose` on an existing codebase:
 3. Seed `openspec/config.yaml` with architecture conventions before generating artifacts
 
 For bug fixes, skip the full spec pipeline: use `/opsx:explore` to diagnose first,
-then `/opsx:propose fix-<name>` with a minimal tasks.md (1–3 tasks).
+then `/opsx:propose fix-<name>` with a minimal tasks.md (1-3 tasks).
 
 ---
 
 ## After implementing
 
 After `/opsx:apply`, load the `spec-review` skill and run it before archiving.
-Ask: "Load the spec-review skill and review the <change-name> change."
+Ask: "Load the spec-review skill and review the `<change-name>` change."
 
 ---
 

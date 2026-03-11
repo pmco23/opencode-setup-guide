@@ -129,7 +129,13 @@ Run `/mem-recall` at the start of a new session on an existing project to restor
 
 A global **skill** (not a slash command) for verifying implementation after `/opsx:apply`. The agent loads it on-demand via the `skill` tool.
 
-**Skill location:** `~/.config/opencode/skills/spec-review/SKILL.md`
+**Source:** [`skills/spec-review/SKILL.md`](../skills/spec-review/SKILL.md) in this repo.
+
+**Install:** Symlink the skill directory into your global skills folder:
+
+```bash
+ln -sfn "$(pwd)/skills/spec-review" ~/.config/opencode/skills/spec-review
+```
 
 To trigger it, ask the agent:
 
@@ -154,18 +160,54 @@ Reads `openspec/changes/<name>/tasks.md` and uses ast-grep to verify each task i
 
 ---
 
+## spec-review-sk — Spec-Kit Verification (Skill)
+
+A global **skill** (not a slash command) for verifying implementation after `/speckit.implement`. The agent loads it on-demand via the `skill` tool.
+
+**Source:** [`skills/spec-review-sk/SKILL.md`](../skills/spec-review-sk/SKILL.md) in this repo.
+
+**Install:** Symlink the skill directory into your global skills folder:
+
+```bash
+ln -sfn "$(pwd)/skills/spec-review-sk" ~/.config/opencode/skills/spec-review-sk
+```
+
+To trigger it, ask the agent:
+
+```
+Load the spec-review-sk skill and review the 001-add-dark-mode spec
+```
+
+Or for the most recent spec:
+
+```
+Load the spec-review-sk skill and review the current spec
+```
+
+### What it checks
+
+**Pass 1 — Spec compliance:**
+Reads `.specify/specs/<NNN-name>/tasks.md` and uses ast-grep to verify each task is implemented. Reports done / incomplete / missing.
+
+**Pass 2 — Code quality:**
+- repomix scans for: `TODO/FIXME/HACK`, `console.log/debugger`, hardcoded secrets
+- ast-grep scans for: empty catch blocks, missing return types on exports
+
+---
+
 ## Quick Reference by Scenario
 
 | Scenario | Command |
 |---|---|
 | Starting work on an unfamiliar codebase | `/repo-overview` |
-| Before writing an OpenSpec proposal | `/repo-overview`, `/repo-pack-slim` |
+| Before writing a spec proposal | `/repo-overview`, `/repo-pack-slim` |
 | Researching a library before implementing | `/gh-docs` or `/c7-how` |
 | Hit an error during implementation | `/c7-fix` or `/gh-fix` |
 | Looking for real-world examples | `/gh-examples` |
 | Finding all usages of a function | `/ast-find` |
 | Detecting structural anti-patterns | `/repo-errors`, `/ast` |
-| After `/opsx:apply` | `spec-review` skill |
+| After `/opsx:apply` (OpenSpec) | `spec-review` skill |
+| After `/speckit.implement` (Spec-Kit) | `spec-review-sk` skill |
 | Starting a new session on an existing project | `/mem-recall` |
 | Saving a key decision | `/mem-save` |
 | Upgrading a dependency | `/c7-migrate` |

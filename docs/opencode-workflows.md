@@ -2,7 +2,7 @@
 
 Concrete end-to-end workflows showing how to combine commands for common development scenarios.
 
-For the full OpenSpec command reference, see [openspec-commands.md](./openspec-commands.md).
+For the full command references, see [openspec-commands.md](./openspec-commands.md) or [speckit-commands.md](./speckit-commands.md).
 
 ---
 
@@ -34,9 +34,11 @@ Save key findings so you don't have to re-derive them next session.
 
 ---
 
-## 2. Starting a New Feature — Fast Path (OpenSpec)
+## 2. Starting a New Feature — Fast Path
 
-Clear requirements, straightforward feature. Use `/opsx:propose` to go from idea to ready-to-implement in one step.
+Clear requirements, straightforward feature. Run through the spec pipeline in sequence.
+
+### OpenSpec
 
 ```
 /repo-overview
@@ -66,7 +68,7 @@ Implement in a clean context window. Works through `tasks.md` task by task, chec
 Validate completeness, correctness, and coherence against the artifacts before archiving.
 
 ```
-/spec-review add-user-notification-preferences
+spec-review skill
 ```
 Optional second pass: catches debug leftovers, hardcoded secrets, empty catches.
 
@@ -77,11 +79,54 @@ Optional second pass: catches debug leftovers, hardcoded secrets, empty catches.
 ```
 Syncs delta specs and moves the change to `openspec/changes/archive/`.
 
+### Spec-Kit
+
+```
+/repo-overview
+/repo-pack-slim
+```
+Understand the codebase before writing a spec. Pack-slim for a compressed structural view.
+
+```
+/speckit.specify add user notification preferences
+```
+Define requirements → creates `.specify/specs/NNN-add-user-notification-preferences/spec.md`.
+
+```
+/speckit.plan
+```
+Technical plan → creates `plan.md`, `data-model.md`, and `contracts/` in the spec folder. Review and edit.
+
+```
+/speckit.tasks
+```
+Generates `tasks.md` from the plan. Review before implementing.
+
+```
+/c7-how store user preferences in postgres with drizzle-orm
+/gh-docs drizzle-orm insert and update
+```
+Research the implementation approach. These run as subtasks — no context pollution.
+
+```
+/speckit.implement
+```
+Implement in a clean context window. Works through `tasks.md` task by task, checking off as it goes.
+
+```
+spec-review-sk skill
+```
+Verify implementation against `tasks.md` + code quality audit.
+
+> `spec-review-sk` is a skill, not a slash command. Ask the agent: _"Load the spec-review-sk skill and review the NNN-add-user-notification-preferences spec"_
+
 ---
 
-## 3. Starting a New Feature — Careful Path (OpenSpec)
+## 3. Starting a New Feature — Careful Path
 
-Requirements are fuzzy or the feature is complex. Use explore → step-by-step artifact creation.
+Requirements are fuzzy or the feature is complex. Use exploration before committing to a plan.
+
+### OpenSpec
 
 ```
 /opsx:explore how should we structure the notification preferences?
@@ -122,9 +167,50 @@ Implement in a clean context.
 ```
 Verify and archive.
 
+### Spec-Kit
+
+```
+/speckit.clarify add notification preferences
+```
+Structured clarification pass — surfaces ambiguities before anything is written. No artifacts yet.
+
+Once questions are answered:
+
+```
+/speckit.specify add notification preferences
+```
+Define requirements based on the clarified scope.
+
+```
+/speckit.plan
+```
+Technical plan. Review and edit `plan.md` and `data-model.md` carefully before proceeding.
+
+```
+/speckit.tasks
+```
+Generate `tasks.md` from the approved plan.
+
+```
+/speckit.analyze
+```
+Cross-artifact consistency check. Catches gaps between spec, plan, and tasks before you implement.
+
+```
+/speckit.implement
+```
+Implement in a clean context.
+
+```
+spec-review-sk skill
+```
+Post-implement verification.
+
 ---
 
-## 4. Closing a Parallel Sprint (OpenSpec)
+## 4. Closing a Parallel Sprint / Checking Artifacts
+
+### OpenSpec — Closing a Parallel Sprint
 
 You've been running multiple changes in parallel and want to close them all out.
 
@@ -140,11 +226,31 @@ Verify each change independently first to surface any gaps.
 ```
 Lists all completed changes, detects spec conflicts between them, resolves conflicts by inspecting what's actually in the codebase, and archives in chronological order.
 
+### Spec-Kit — Checking Artifacts Before Implementing
+
+You've generated spec artifacts and want to verify consistency before writing code.
+
+```
+/speckit.analyze
+```
+Cross-artifact check: verifies that `spec.md`, `plan.md`, `data-model.md`, and `contracts/` are mutually consistent. Surfaces contradictions and gaps.
+
+```
+/speckit.checklist
+```
+Quality checklist pass on the artifacts. Confirm everything is ready to implement.
+
+Fix any flagged issues in the relevant artifact files, then run:
+
+```
+/speckit.implement
+```
+
 ---
 
 ## 5. Adding a Feature to an Existing Codebase (Brownfield)
 
-You need to add something new to a codebase you didn't write. Map what exists before writing any proposal.
+You need to add something new to a codebase you didn't write. Map what exists before writing any spec.
 
 ```
 /repo-overview
@@ -162,6 +268,8 @@ Map the three pillars: existing auth patterns, live endpoints (avoid collisions)
 /mem-save this project uses JWT in src/middleware/auth.ts, Prisma ORM, REST API under src/routes/
 ```
 Save conventions and gotchas so you don't re-derive them next session.
+
+### OpenSpec
 
 Seed `openspec/config.yaml` with what you found — see [openspec-install.md § Brownfield projects](./openspec-install.md#brownfield-projects-seed-configyaml-first) for the format. This acts as a constitution: every OpenSpec proposal generated will respect the constraints you encode there.
 
@@ -187,21 +295,60 @@ Implement in a clean context window. Works through `tasks.md` task by task.
 Validate completeness against the spec before archiving.
 
 ```
-/spec-review add-invoice-export-to-pdf
+spec-review skill
 ```
 Catch debug leftovers, hardcoded secrets, empty catches.
 
-> `spec-review` is a skill. Ask the agent: _"Load the spec-review skill and review the add-invoice-export-to-pdf change"_
+> Ask the agent: _"Load the spec-review skill and review the add-invoice-export-to-pdf change"_
 
 ```
 /opsx:archive
 ```
 
+### Spec-Kit
+
+Seed `.specify/memory/constitution.md` with what you found — see [speckit-install.md § Brownfield projects](./speckit-install.md#brownfield-projects-seed-constitutionmd-first) for the format. Every Spec-Kit artifact generated will respect the constraints you encode there.
+
+```
+/speckit.specify add invoice export to PDF
+```
+Write the spec informed by what actually exists. Spec-Kit sees your `constitution.md`.
+
+```
+/speckit.plan
+```
+Technical plan. Review `plan.md` and `data-model.md`.
+
+```
+/c7-how generate PDFs in node.js with pdfkit
+/gh-docs pdfkit text and tables
+```
+Research the implementation approach as subtasks — no context pollution.
+
+```
+/speckit.tasks
+```
+Generate tasks.
+
+```
+/speckit.implement
+```
+Implement in a clean context window. Works through `tasks.md` task by task.
+
+```
+spec-review-sk skill
+```
+Catch debug leftovers, hardcoded secrets, empty catches.
+
+> Ask the agent: _"Load the spec-review-sk skill and review the NNN-add-invoice-export-to-pdf spec"_
+
 ---
 
-## 6. Bug Fix with OpenSpec
+## 6. Bug Fix
 
-You have a bug report or failing test. Skip the full spec pipeline — use a lightweight propose with minimal tasks.
+You have a bug report or failing test. Skip the full spec pipeline.
+
+### OpenSpec
 
 ```
 /opsx:explore user sessions are expiring too early even with valid tokens
@@ -229,7 +376,7 @@ Once root cause is confirmed:
 ```
 /opsx:propose fix-session-expiry
 ```
-Write a minimal proposal: what's wrong, what fixes it, and a short `tasks.md` (often just 1–3 tasks). No need for full `specs/` or `design.md`.
+Write a minimal proposal: what's wrong, what fixes it, and a short `tasks.md` (often just 1-3 tasks). No need for full `specs/` or `design.md`.
 
 ```
 /opsx:apply
@@ -240,6 +387,49 @@ Fix in a clean context.
 /opsx:archive
 ```
 Skip `/opsx:verify` for small single-file fixes. Run it if the bug touched shared infrastructure or has side effects across modules.
+
+### Spec-Kit
+
+Plain conversation:
+```
+I'm seeing user sessions expire too early even with valid tokens. Let's investigate.
+```
+Investigate the codebase, trace the root cause. No artifacts created yet — pure diagnosis.
+
+```
+/ast-find verifyToken
+```
+Find all call sites and definitions of the suspected function to understand scope.
+
+```
+/repo-errors
+```
+Check for related error handling issues nearby — often bugs have swallowed siblings.
+
+```
+/c7-fix jsonwebtoken verify options ignoreExpiration
+/gh-fix jwt token expiry validation node.js
+```
+Look up known solutions if the bug is library-related.
+
+Once root cause is confirmed, run a narrow spec:
+
+```
+/speckit.specify fix session expiry — tokens validated with wrong clock tolerance
+```
+Narrow scope: just the fix. Keep `spec.md` short. Skip plan/data-model for a 1-3 task fix.
+
+```
+/speckit.tasks
+```
+Minimal `tasks.md` — often just 1-3 tasks for a bug fix.
+
+```
+/speckit.implement
+```
+Fix in a clean context.
+
+Skip `spec-review-sk` for small single-file fixes. Run it if the bug touched shared infrastructure or has side effects across modules.
 
 ---
 
@@ -379,10 +569,10 @@ Before opening a PR, make sure the code is clean.
 ```
 Full audit: tech debt markers, debug leftovers, potential secrets, empty catches, missing return types. Fix everything flagged as Critical or High.
 
-```
-spec-review skill
-```
-If working with OpenSpec: verify all tasks are implemented before archiving. Ask the agent: _"Load the spec-review skill and review the current change"_
+If working with a spec tool, verify all tasks are implemented before closing:
+
+- **OpenSpec**: _"Load the spec-review skill and review the current change"_
+- **Spec-Kit**: _"Load the spec-review-sk skill and review the current spec"_
 
 ---
 
