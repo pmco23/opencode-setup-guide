@@ -23,6 +23,11 @@ Get a high-level map: purpose, directory layout, technologies, entry points.
 Understand scale — how many files, token count, largest files.
 
 ```
+/repo-export
+```
+Optional when you want a reusable XML snapshot on disk for a future session, a handoff, or another tool. Use `/repo-export-slim` instead if you want a smaller structural snapshot, or pass a custom path such as `/repo-export artifacts/backend.xml`.
+
+```
 /repo-auth
 /repo-routes
 /repo-models

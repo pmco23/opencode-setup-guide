@@ -6,7 +6,7 @@ All custom commands available in the global OpenCode config. Run with `/command-
 
 ## repo-* — Codebase Analysis
 
-Commands that analyze the local codebase. Most use repomix + ast-grep in combination. All run as subtasks (isolated context).
+Commands that analyze the local codebase. Most use repomix + ast-grep in combination, and the export commands use the Repomix CLI for durable files. All run as subtasks (isolated context).
 
 | Command | Arguments | Description |
 |---|---|---|
@@ -14,6 +14,8 @@ Commands that analyze the local codebase. Most use repomix + ast-grep in combina
 | `/repo-stats` | — | File count, total tokens, largest files |
 | `/repo-pack` | — | Full repomix snapshot for the current analysis run |
 | `/repo-pack-slim` | — | Compressed structural repomix snapshot with lower token cost |
+| `/repo-export` | `[output-path]` | Write a full repomix XML snapshot to disk |
+| `/repo-export-slim` | `[output-path]` | Write a compressed repomix XML snapshot to disk |
 | `/repo-search` | `<pattern>` | Text search across all files (strings, comments, config) |
 | `/repo-auth` | — | Map all auth/session/JWT/permission code |
 | `/repo-routes` | — | Map all HTTP routes and endpoint definitions |
@@ -26,6 +28,14 @@ Commands that analyze the local codebase. Most use repomix + ast-grep in combina
 - **`/repo-pack`** — when you want a full in-session repomix snapshot, including file contents
 - **`/repo-pack-slim`** — large codebases, or when you mostly need structure/signatures with lower token cost
 - Both commands analyze the repo in a subtask and do not guarantee a reusable file on disk
+- If you want a reusable file on disk, use `/repo-export` or `/repo-export-slim` instead
+
+### Export commands
+
+- **`/repo-export`** — writes a full XML snapshot to `./repomix-output.xml` by default
+- **`/repo-export-slim`** — writes a compressed XML snapshot to `./repomix-output-slim.xml` by default
+- Pass `[output-path]` to override the destination, for example `/repo-export artifacts/backend.xml`
+- These commands use the Repomix CLI, so the file persists after the current session
 
 ### repo-search vs ast-find
 
@@ -204,6 +214,7 @@ Reads `.specify/specs/<NNN-name>/tasks.md` and uses ast-grep to verify each task
 |---|---|
 | Starting work on an unfamiliar codebase | `/repo-overview` |
 | Before writing a spec proposal | `/repo-overview`, `/repo-pack-slim` |
+| Saving a reusable repo snapshot to disk | `/repo-export` or `/repo-export-slim` |
 | Researching a library before implementing | `/gh-docs` or `/c7-how` |
 | Hit an error during implementation | `/c7-fix` or `/gh-fix` |
 | Looking for real-world examples | `/gh-examples` |

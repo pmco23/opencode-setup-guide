@@ -49,6 +49,16 @@
       "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory with `compress: true`. Treat the packed result as in-session analysis output, not a guaranteed file on disk. Report the metrics (file count, total tokens, largest files, and any compression savings if visible). Then provide a structural overview: key modules, exported functions/classes, and overall architecture.",
       "subtask": true
     },
+    "repo-export": {
+      "description": "Export a full repomix XML snapshot to disk",
+      "template": "Use the Bash tool to export the current working directory with the Repomix CLI. If `$ARGUMENTS` is provided, use it as the output path; otherwise default to `./repomix-output.xml`. Ensure the destination directory exists, then run `npx -y repomix@latest --style xml -o <path>`. Report the final output path and the key metrics from the Repomix CLI summary.",
+      "subtask": true
+    },
+    "repo-export-slim": {
+      "description": "Export a compressed repomix XML snapshot to disk",
+      "template": "Use the Bash tool to export the current working directory with the Repomix CLI. If `$ARGUMENTS` is provided, use it as the output path; otherwise default to `./repomix-output-slim.xml`. Ensure the destination directory exists, then run `npx -y repomix@latest --compress --style xml -o <path>`. Report the final output path and the key metrics from the Repomix CLI summary, including any visible compression savings.",
+      "subtask": true
+    },
     "repo-search": {
       "description": "Text search across codebase (strings, comments, config values)",
       "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory. Then use `grep_repomix_output` to search for the text pattern: $ARGUMENTS. Use this for searching strings, comments, config values, or natural language — things that don't have code structure. Show matching lines with 3 lines of context, grouped by file.",

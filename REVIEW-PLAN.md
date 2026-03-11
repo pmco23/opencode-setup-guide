@@ -80,10 +80,11 @@ Audit of the repo performed on 2026-03-11. This file now records the agreed deci
 
 ## Follow-up Enhancement
 
-### A. Add explicit export-to-disk repomix commands
+### A. Explicit export-to-disk repomix commands were added
 
-**Status:** pending
-**Proposed work:** Add dedicated commands such as `/repo-export` and `/repo-export-slim` that use the Repomix CLI to write reusable packed files to disk with clear default output paths.
+**Files:** `opencode.json`, `docs/opencode-commands.md`
+**Decision:** Add dedicated `/repo-export` and `/repo-export-slim` commands that use the Repomix CLI to write reusable XML files to disk with clear default output paths.
+**Status:** done
 
 ---
 
