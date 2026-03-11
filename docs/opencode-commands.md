@@ -12,8 +12,8 @@ Commands that analyze the local codebase. Most use repomix + ast-grep in combina
 |---|---|---|
 | `/repo-overview` | — | Project structure, purpose, technologies, key entry points |
 | `/repo-stats` | — | File count, total tokens, largest files |
-| `/repo-pack` | — | Pack to `./repomix-output.xml` (full, uncompressed) |
-| `/repo-pack-slim` | — | Pack to `./repomix-output.xml` with ~70% token reduction via Tree-sitter |
+| `/repo-pack` | — | Full repomix snapshot for the current analysis run |
+| `/repo-pack-slim` | — | Compressed structural repomix snapshot with lower token cost |
 | `/repo-search` | `<pattern>` | Text search across all files (strings, comments, config) |
 | `/repo-auth` | — | Map all auth/session/JWT/permission code |
 | `/repo-routes` | — | Map all HTTP routes and endpoint definitions |
@@ -23,8 +23,9 @@ Commands that analyze the local codebase. Most use repomix + ast-grep in combina
 
 ### When to use repo-pack vs repo-pack-slim
 
-- **`/repo-pack`** — when you want to attach `repomix-output.xml` to future conversations as full context
-- **`/repo-pack-slim`** — large codebases, or when you only need structure/signatures (not full file contents)
+- **`/repo-pack`** — when you want a full in-session repomix snapshot, including file contents
+- **`/repo-pack-slim`** — large codebases, or when you mostly need structure/signatures with lower token cost
+- Both commands analyze the repo in a subtask and do not guarantee a reusable file on disk
 
 ### repo-search vs ast-find
 
@@ -134,6 +135,7 @@ A global **skill** (not a slash command) for verifying implementation after `/op
 **Install:** Symlink the skill directory into your global skills folder:
 
 ```bash
+mkdir -p ~/.config/opencode/skills
 ln -sfn "$(pwd)/skills/spec-review" ~/.config/opencode/skills/spec-review
 ```
 
@@ -169,6 +171,7 @@ A global **skill** (not a slash command) for verifying implementation after `/sp
 **Install:** Symlink the skill directory into your global skills folder:
 
 ```bash
+mkdir -p ~/.config/opencode/skills
 ln -sfn "$(pwd)/skills/spec-review-sk" ~/.config/opencode/skills/spec-review-sk
 ```
 

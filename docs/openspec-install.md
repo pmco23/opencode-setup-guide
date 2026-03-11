@@ -87,13 +87,13 @@ Then apply it:
 openspec update
 ```
 
-This regenerates the AI skill files in `.claude/skills/` with the expanded command set.
+This regenerates the slash-command skill files in `.claude/skills/` with the expanded command set. These OpenSpec-managed files are distinct from the manual OpenCode review skills installed under `~/.config/opencode/skills/`.
 
 ---
 
 ## 4. Verify Commands Are Available in OpenCode
 
-After `openspec update`, the commands are injected as OpenCode skills. Restart OpenCode if it was already running, then type `/opsx:` — you should see the full command list including the expanded commands.
+After `openspec update`, the `/opsx:*` commands are available in OpenCode through those generated slash-command files. Restart OpenCode if it was already running, then type `/opsx:` — you should see the full command list including the expanded commands.
 
 ---
 

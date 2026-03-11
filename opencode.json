@@ -40,13 +40,13 @@
       "subtask": true
     },
     "repo-pack": {
-      "description": "Pack codebase and save to ./repomix-output.xml",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory, setting `outputPath` to `./repomix-output.xml`. Report the metrics (file count, total tokens, largest files) and confirm the output path. Then provide a brief overview of the project structure.",
+      "description": "Full repomix snapshot for in-session analysis",
+      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory. Treat the packed result as in-session analysis output, not a guaranteed file on disk. Report the metrics (file count, total tokens, largest files). Then provide a brief overview of the project structure.",
       "subtask": true
     },
     "repo-pack-slim": {
-      "description": "Pack with Tree-sitter compression (~70% fewer tokens), save to ./repomix-output.xml",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory with `compress: true` and `outputPath` set to `./repomix-output.xml`. Report the metrics (file count, tokens before/after, ~70% reduction). Then read the compressed output to give a structural overview: key modules, exported functions/classes, and overall architecture.",
+      "description": "Compressed repomix snapshot for in-session analysis",
+      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory with `compress: true`. Treat the packed result as in-session analysis output, not a guaranteed file on disk. Report the metrics (file count, total tokens, largest files, and any compression savings if visible). Then provide a structural overview: key modules, exported functions/classes, and overall architecture.",
       "subtask": true
     },
     "repo-search": {
@@ -118,33 +118,33 @@
     },
     "gh-docs": {
       "description": "Official docs (Context7) + real-world usage (GitHub) combined",
-      "template": "I want to understand how to use: $ARGUMENTS\n\nStep 1 (official docs) — Use the context7 MCP tools: resolve the library ID with `resolve-library-id`, then query with `get-library-docs` for the relevant topic.\n\nStep 2 (real-world usage) — Use the gh_grep MCP tool to search public GitHub repositories for actual production usage of the same API or pattern.\n\nCombine both: show the official API with code examples, then contrast with how the community actually uses it in practice. Highlight any gaps or common patterns not covered by the docs.",
+      "template": "I want to understand how to use: $ARGUMENTS\n\nStep 1 (official docs) — Use the context7 MCP tools: resolve the library ID with `resolve-library-id`, then query with `query-docs` for the relevant topic.\n\nStep 2 (real-world usage) — Use the gh_grep MCP tool to search public GitHub repositories for actual production usage of the same API or pattern.\n\nCombine both: show the official API with code examples, then contrast with how the community actually uses it in practice. Highlight any gaps or common patterns not covered by the docs.",
       "subtask": true
     },
 
     "c7-docs": {
       "description": "Look up docs for a library using Context7",
-      "template": "Use the context7 MCP tools to look up documentation for: $ARGUMENTS. First resolve the library ID with `resolve-library-id`, then query the docs with `get-library-docs`. Return a clear, concise summary with relevant code examples.",
+      "template": "Use the context7 MCP tools to look up documentation for: $ARGUMENTS. First resolve the library ID with `resolve-library-id`, then query the docs with `query-docs`. Return a clear, concise summary with relevant code examples.",
       "subtask": true
     },
     "c7-how": {
       "description": "Ask how to do something with a library via Context7",
-      "template": "Use the context7 MCP tools to find out how to: $ARGUMENTS. Identify the relevant library, resolve its ID with `resolve-library-id`, then query the docs with `get-library-docs` using the question as the query. Show practical code examples.",
+      "template": "Use the context7 MCP tools to find out how to: $ARGUMENTS. Identify the relevant library, resolve its ID with `resolve-library-id`, then query the docs with `query-docs` using the question as the query. Show practical code examples.",
       "subtask": true
     },
     "c7-api": {
       "description": "Look up an API reference via Context7",
-      "template": "Use the context7 MCP tools to look up the API reference for $1 in the $2 library. Resolve the library ID with `resolve-library-id`, then query with `get-library-docs` focused on the API signature, parameters, return values, and usage examples.",
+      "template": "Use the context7 MCP tools to look up the API reference for $1 in the $2 library. Resolve the library ID with `resolve-library-id`, then query with `query-docs` focused on the API signature, parameters, return values, and usage examples.",
       "subtask": true
     },
     "c7-fix": {
       "description": "Find docs to fix the current error via Context7",
-      "template": "I am encountering the following error or issue:\n\n$ARGUMENTS\n\nUse the context7 MCP tools to find relevant documentation that helps resolve this. Identify the library involved, resolve its ID with `resolve-library-id`, and query the docs with `get-library-docs`. Explain the root cause and provide a working code fix.",
+      "template": "I am encountering the following error or issue:\n\n$ARGUMENTS\n\nUse the context7 MCP tools to find relevant documentation that helps resolve this. Identify the library involved, resolve its ID with `resolve-library-id`, and query the docs with `query-docs`. Explain the root cause and provide a working code fix.",
       "subtask": true
     },
     "c7-migrate": {
       "description": "Find a library migration guide via Context7",
-      "template": "Use the context7 MCP tools to find the migration guide for $ARGUMENTS. Resolve the library ID with `resolve-library-id`, then query the docs with `get-library-docs` asking for breaking changes, migration steps, and updated API usage between versions.",
+      "template": "Use the context7 MCP tools to find the migration guide for $ARGUMENTS. Resolve the library ID with `resolve-library-id`, then query the docs with `query-docs` asking for breaking changes, migration steps, and updated API usage between versions.",
       "subtask": true
     },
 
@@ -162,6 +162,6 @@
       "description": "Clear all memory stored for this project",
       "template": "Use the memory MCP tool to find and delete all entities and observations stored for this project. List what is being removed before deleting, and confirm when done.",
       "subtask": false
-    },
+    }
   }
 }

@@ -20,7 +20,7 @@ use the `sequential-thinking` MCP tool to plan before acting.
 
 ## Researching libraries
 
-- For official API references and how-to questions, use the `context7` MCP tools (`resolve-library-id` + `get-library-docs`)
+- For official API references and how-to questions, use the `context7` MCP tools (`resolve-library-id` + `query-docs`)
 - For real-world usage patterns and debugging errors, use the `gh_grep` MCP tool
 - When both are relevant (validating docs against real usage), run both
 

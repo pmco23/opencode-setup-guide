@@ -2,7 +2,7 @@
 
 Concrete end-to-end workflows showing how to combine commands for common development scenarios.
 
-For the full command references, see [openspec-commands.md](./openspec-commands.md) or [speckit-commands.md](./speckit-commands.md).
+For the full command references, see [opencode-commands.md](./opencode-commands.md) for shared `/repo-*`, `/ast-*`, `/gh-*`, `/c7-*`, and `/mem-*` commands, plus [openspec-commands.md](./openspec-commands.md) or [speckit-commands.md](./speckit-commands.md) for tool-specific commands.
 
 ---
 
@@ -14,6 +14,8 @@ You've just cloned a repo you've never seen before.
 /repo-overview
 ```
 Get a high-level map: purpose, directory layout, technologies, entry points.
+
+> Shared `/repo-*`, `/ast-*`, `/gh-*`, `/c7-*`, and `/mem-*` commands are documented in [opencode-commands.md](./opencode-commands.md).
 
 ```
 /repo-stats
@@ -86,6 +88,8 @@ Syncs delta specs and moves the change to `openspec/changes/archive/`.
 /repo-pack-slim
 ```
 Understand the codebase before writing a spec. Pack-slim for a compressed structural view.
+
+> If this is the first time using Spec-Kit in this project, run `/speckit.constitution` first, or rerun it whenever the architecture rules need a refresh.
 
 ```
 /speckit.specify add user notification preferences

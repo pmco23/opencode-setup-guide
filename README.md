@@ -13,14 +13,28 @@ Both tools follow the same philosophy: explore → specify → plan → implemen
 
 ---
 
+## Shared Prerequisites
+
+- Node.js is required for the shared OpenCode config (`repomix`, `memory`, `sequential-thinking`)
+- Docker is optional and only needed for shared `/ast-*` commands
+- Python + `uv` are only needed if you are using Spec-Kit
+
+---
+
 ## Quick Start
 
-1. Copy `opencode.json` to `~/.config/opencode/opencode.json` (global config)
-2. Copy the matching AGENTS.md to your project root:
-   - OpenSpec users: `cp agents/openspec.md /path/to/your-project/AGENTS.md`
-   - Spec-Kit users: `cp agents/speckit.md /path/to/your-project/AGENTS.md`
-3. Install skills (see below)
-4. Follow the install guide for your spec tool ([OpenSpec](docs/openspec-install.md) or [Spec-Kit](docs/speckit-install.md))
+1. Create the global OpenCode config directories:
+   ```bash
+   mkdir -p ~/.config/opencode/skills
+   ```
+2. Copy `opencode.json` to `~/.config/opencode/opencode.json` (global config)
+3. Copy the matching global `AGENTS.md` preset:
+   - OpenSpec users: `cp agents/openspec.md ~/.config/opencode/AGENTS.md`
+   - Spec-Kit users: `cp agents/speckit.md ~/.config/opencode/AGENTS.md`
+4. Install skills (see below)
+5. Follow the install guide for your spec tool ([OpenSpec](docs/openspec-install.md) or [Spec-Kit](docs/speckit-install.md))
+
+Project `AGENTS.md` remains an optional team-shared layer inside a repo. The presets in `agents/` are personal global defaults for OpenCode.
 
 ---
 
@@ -29,6 +43,8 @@ Both tools follow the same philosophy: explore → specify → plan → implemen
 Two review skills are included. Install them by symlinking into your OpenCode skills directory:
 
 ```bash
+mkdir -p ~/.config/opencode/skills
+
 # OpenSpec users
 ln -sfn "$(pwd)/skills/spec-review" ~/.config/opencode/skills/spec-review
 
@@ -43,7 +59,7 @@ ln -sfn "$(pwd)/skills/spec-review-sk" ~/.config/opencode/skills/spec-review-sk
 
 Symlinks mean `git pull` automatically updates the skills.
 
-See [opencode-commands.md § Skills](docs/opencode-commands.md#spec-review--openspec-verification-skill) for usage details.
+See [spec-review usage](docs/opencode-commands.md#spec-review--openspec-verification-skill) and [spec-review-sk usage](docs/opencode-commands.md#spec-review-sk--spec-kit-verification-skill) for details.
 
 ---
 
@@ -52,8 +68,8 @@ See [opencode-commands.md § Skills](docs/opencode-commands.md#spec-review--open
 | File | Purpose | Install |
 |---|---|---|
 | `opencode.json` | Global config: MCP servers + custom commands | Copy to `~/.config/opencode/opencode.json` |
-| `agents/openspec.md` | AGENTS.md for OpenSpec projects | Copy to project root as `AGENTS.md` |
-| `agents/speckit.md` | AGENTS.md for Spec-Kit projects | Copy to project root as `AGENTS.md` |
+| `agents/openspec.md` | Global AGENTS preset for OpenSpec workflows | Copy to `~/.config/opencode/AGENTS.md` |
+| `agents/speckit.md` | Global AGENTS preset for Spec-Kit workflows | Copy to `~/.config/opencode/AGENTS.md` |
 
 ---
 

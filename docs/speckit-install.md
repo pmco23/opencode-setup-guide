@@ -6,9 +6,13 @@ Setting up Spec-Kit for use with OpenCode.
 
 ## Requirements
 
+- Node.js (required for the shared OpenCode config: `repomix`, `memory`, `sequential-thinking`)
 - Python 3.9 or higher
 - [uv](https://github.com/astral-sh/uv) package manager
 - An existing project directory
+- Optional: Docker if you want the shared `ast-*` commands
+
+Node.js and Docker are OpenCode shared-config prerequisites. Spec-Kit itself still uses Python + `uv`.
 
 ---
 
@@ -67,7 +71,7 @@ This creates the `.specify/` directory structure:
 └── templates/              # custom artifact templates
 ```
 
-It also injects `/speckit.*` slash commands into OpenCode (as skills in `.claude/skills/`). Restart OpenCode after init.
+It also injects `/speckit.*` slash commands into OpenCode via framework-managed files in `.claude/skills/`. These are distinct from the manual OpenCode review skills installed under `~/.config/opencode/skills/`. Restart OpenCode after init.
 
 ---
 
