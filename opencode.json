@@ -12,7 +12,7 @@
     },
     "repomix": {
       "type": "local",
-      "command": ["sh", "-c", "docker run -i --rm -v \"$(pwd):$(pwd)\" -w \"$(pwd)\" ghcr.io/yamadashy/repomix --mcp"]
+      "command": ["npx", "-y", "repomix", "--mcp"]
     },
     "ast-grep": {
       "type": "local",
