@@ -17,8 +17,6 @@ The `spec-review` skill lives at `~/.config/opencode/skills/spec-review/SKILL.md
 
 ## Index
 
-## Index
-
 | # | File | Purpose |
 |---|---|---|
 | 1 | [opencode-setup.md](./opencode-setup.md) | Install and configure OpenCode globally: MCP servers, tool design principles, OpenSpec integration |

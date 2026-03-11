@@ -39,10 +39,10 @@ Six MCP servers are configured globally. Each serves a distinct purpose.
 ```json
 {
   "type": "local",
-  "command": ["docker", "run", "-i", "--rm", "ghcr.io/yamadashy/repomix", "--mcp"]
+  "command": ["sh", "-c", "docker run -i --rm -v \"$(pwd):$(pwd)\" -w \"$(pwd)\" ghcr.io/yamadashy/repomix --mcp"]
 }
 ```
-> Requires Docker.
+> Requires Docker. The `-v` and `-w` flags mount your current working directory into the container at the same path, so `pack_codebase` can read local project files. Without this mount, only remote repository operations work.
 
 ---
 
