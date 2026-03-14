@@ -377,11 +377,15 @@ Track refactoring progress for complex multi-file changes.
 
 Before opening a PR, make sure the code is clean.
 
-Run the `spec-review` skill:
+**For non-OpenSpec changes**, use the `code-review` skill:
+
+_"Load the code-review skill and check my staged changes"_
+
+**For OpenSpec changes**, use the `spec-review` skill instead:
 
 _"Load the spec-review skill and review the current change"_
 
-This catches debug leftovers, hardcoded credentials, empty catches, and missing return types.
+Both catch debug leftovers, hardcoded credentials, empty catches, and missing return types. `spec-review` additionally verifies spec compliance against `tasks.md`.
 
 ---
 

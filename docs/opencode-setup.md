@@ -201,6 +201,7 @@ The skill source files live in `skills/` in this repo. Symlink them into the glo
 ```bash
 mkdir -p ~/.config/opencode/skills
 ln -sfn "$(pwd)/skills/spec-review" ~/.config/opencode/skills/spec-review
+ln -sfn "$(pwd)/skills/code-review" ~/.config/opencode/skills/code-review
 ```
 
 This keeps the repo as the single source of truth — `git pull` updates the skills automatically.

@@ -16,6 +16,7 @@ This reference covers the retained OpenCode slash commands plus the `spec-review
 | Saving a decision or convention for later sessions | `/mem-save` |
 | Clearing stored project memory | `/mem-clear` |
 | Verifying an OpenSpec change after implementation | `spec-review` skill |
+| Pre-commit code quality audit (no OpenSpec) | `code-review` skill |
 
 ---
 
@@ -129,3 +130,37 @@ Reads `openspec/changes/<name>/tasks.md` and uses ast-grep to verify each task i
 **Pass 2 - Review checks:**
 - Reviews unfinished code indicators and other follow-up items flagged by the skill
 - Runs structural review checks defined by the skill for the current change
+
+---
+
+## code-review — Pre-commit Code Quality Audit
+
+`code-review` is a global skill for auditing code quality before committing. It does not require OpenSpec — use it for any changes, especially those that skipped the spec pipeline.
+
+**Source:** [`skills/code-review/SKILL.md`](../skills/code-review/SKILL.md) in this repo.
+
+**Install:** Symlink the skill directory into your global skills folder:
+
+```bash
+mkdir -p ~/.config/opencode/skills
+ln -sfn "$(pwd)/skills/code-review" ~/.config/opencode/skills/code-review
+```
+
+To trigger it, ask the agent:
+
+```text
+Load the code-review skill and check my staged changes
+```
+
+Or for a specific directory:
+
+```text
+Load the code-review skill and audit src/api/
+```
+
+### What it checks
+
+- **Text search:** TODO/FIXME/HACK markers, debug leftovers (language-aware), hardcoded secrets
+- **Structural search:** Empty catch blocks, missing return type annotations (TypeScript)
+
+Output is a prioritized report (critical / high / medium) with file and line references.

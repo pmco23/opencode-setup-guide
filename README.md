@@ -31,20 +31,22 @@ Project `AGENTS.md` remains an optional team-shared layer inside a repo. The pre
 
 ## Skills
 
-The `spec-review` skill is included for post-implementation OpenSpec review. Install it by symlinking into your OpenCode skills directory:
+Two skills are included. Install them by symlinking into your OpenCode skills directory:
 
 ```bash
 mkdir -p ~/.config/opencode/skills
 ln -sfn "$(pwd)/skills/spec-review" ~/.config/opencode/skills/spec-review
+ln -sfn "$(pwd)/skills/code-review" ~/.config/opencode/skills/code-review
 ```
 
 | Skill | Purpose |
 |---|---|
 | [spec-review](skills/spec-review/SKILL.md) | Post-implementation review for OpenSpec changes |
+| [code-review](skills/code-review/SKILL.md) | Pre-commit code quality audit (no OpenSpec required) |
 
 Symlinks mean `git pull` automatically updates the skills.
 
-See [spec-review usage](docs/opencode-commands.md#spec-review--openspec-verification-skill) for details.
+See [skill usage](docs/opencode-commands.md#spec-review--openspec-verification-skill) for details.
 
 ---
 
