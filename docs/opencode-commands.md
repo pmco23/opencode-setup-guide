@@ -172,42 +172,6 @@ Reads `openspec/changes/<name>/tasks.md` and uses ast-grep to verify each task i
 
 ---
 
-## spec-review-sk — Spec-Kit Verification (Skill)
-
-A global **skill** (not a slash command) for verifying implementation after `/speckit.implement`. The agent loads it on-demand via the `skill` tool.
-
-**Source:** [`skills/spec-review-sk/SKILL.md`](../skills/spec-review-sk/SKILL.md) in this repo.
-
-**Install:** Symlink the skill directory into your global skills folder:
-
-```bash
-mkdir -p ~/.config/opencode/skills
-ln -sfn "$(pwd)/skills/spec-review-sk" ~/.config/opencode/skills/spec-review-sk
-```
-
-To trigger it, ask the agent:
-
-```
-Load the spec-review-sk skill and review the 001-add-dark-mode spec
-```
-
-Or for the most recent spec:
-
-```
-Load the spec-review-sk skill and review the current spec
-```
-
-### What it checks
-
-**Pass 1 — Spec compliance:**
-Reads `.specify/specs/<NNN-name>/tasks.md` and uses ast-grep to verify each task is implemented. Reports done / incomplete / missing.
-
-**Pass 2 — Code quality:**
-- repomix scans for: `TODO/FIXME/HACK`, `console.log/debugger`, hardcoded secrets
-- ast-grep scans for: empty catch blocks, missing return types on exports
-
----
-
 ## Quick Reference by Scenario
 
 | Scenario | Command |
@@ -221,7 +185,6 @@ Reads `.specify/specs/<NNN-name>/tasks.md` and uses ast-grep to verify each task
 | Finding all usages of a function | `/ast-find` |
 | Detecting structural anti-patterns | `/repo-errors`, `/ast` |
 | After `/opsx:apply` (OpenSpec) | `spec-review` skill |
-| After `/speckit.implement` (Spec-Kit) | `spec-review-sk` skill |
 | Starting a new session on an existing project | `/mem-recall` |
 | Saving a key decision | `/mem-save` |
 | Upgrading a dependency | `/c7-migrate` |
