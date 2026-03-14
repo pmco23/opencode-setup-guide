@@ -18,14 +18,14 @@ After `/opsx:apply`, perform a two-pass review before archiving:
 
 **Pass 2 — Code quality**
 
-1. Use the repomix MCP tool (`pack_codebase`) with `directory` set to the project root. After packing, copy the output file into the project directory (e.g. `cp <outputFilePath> ./repomix-output.md`) so it is accessible on the host filesystem.
-2. Use `grep_repomix_output` (with the returned `outputId`) to scan for:
+1. Use the `grep` content search tool to scan for:
    - `TODO|FIXME|HACK` — unfinished work
    - `console.log|debugger` — debug leftovers
    - `password|secret|api_key|apikey|private_key` — potential hardcoded secrets
-3. Use the ast-grep MCP tool to find:
+   Report file paths and line numbers for each match.
+2. Use the `ast-grep` MCP tool to find:
    - Empty catch blocks: `try { $$$ } catch($E) {}`
-   - Missing return type annotations on exported functions
+   - Missing return type annotations on exported functions in typed languages (TypeScript, TypeScriptReact)
 
 ## Output format
 
