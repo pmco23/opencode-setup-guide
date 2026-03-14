@@ -4,14 +4,13 @@ Personal reference for the global OpenCode configuration at `~/.config/opencode/
 
 ## Shared prerequisites
 
-- Node.js is required for the shared OpenCode config because `repomix`, `memory`, and `sequential-thinking` run locally via `npx`
-- Docker is optional and only needed if you want the shared `ast-*` commands
+- Node.js is required for the shared OpenCode config because `memory` runs locally via `npx`
 
 ---
 
 ## MCP Servers
 
-Six MCP servers are configured globally. Each serves a distinct purpose.
+Three MCP servers are configured globally. Each serves a distinct purpose.
 
 ### context7
 **What:** Official library documentation lookup.
@@ -26,31 +25,6 @@ Six MCP servers are configured globally. Each serves a distinct purpose.
 
 ---
 
-### gh_grep
-**What:** Grep over millions of public GitHub repositories.
-**When:** You want to see how real production codebases use a library, pattern, or API — not just the docs.
-```json
-{
-  "type": "remote",
-  "url": "https://mcp.grep.app"
-}
-```
-
----
-
-### repomix
-**What:** Packs an entire local codebase into a single consolidated output for analysis.
-**When:** You need a high-level overview, want to search across all files at once, or need to analyze a project holistically.
-```json
-{
-  "type": "local",
-  "command": ["npx", "-y", "repomix", "--mcp"]
-}
-```
-> Requires Node.js. Runs directly on the host via npx, giving full access to the local filesystem for both reading codebases and writing output files.
-
----
-
 ### ast-grep
 **What:** Structural AST-aware code search. Understands code syntax, not just text.
 **When:** You need precise pattern matching — finding function definitions, call sites, imports, or structural anti-patterns without false positives from comments or strings.
@@ -60,7 +34,6 @@ Six MCP servers are configured globally. Each serves a distinct purpose.
   "command": ["sh", "-c", "docker run -i --rm -v \"$(pwd):/src\" mcp/ast-grep"]
 }
 ```
-> Requires Docker.
 
 ---
 
@@ -76,44 +49,23 @@ Six MCP servers are configured globally. Each serves a distinct purpose.
 
 ---
 
-### sequential-thinking
-**What:** Forces the model to reason step-by-step before acting.
-**When:** Complex multi-step tasks (implementing features, refactoring, debugging) where rushing leads to mistakes. Works best combined with spec-driven workflows.
-```json
-{
-  "type": "local",
-  "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
-}
-```
-
----
-
 ## Tool Design Principles
 
-### repomix vs ast-grep — when to use which
-
-| Situation | Use |
-|---|---|
-| Exploring an unfamiliar codebase | repomix |
-| Finding files that contain a topic | repomix |
-| Searching strings, comments, config values | repomix |
-| Finding all usages of a specific function/class | ast-grep |
-| Detecting structural anti-patterns (empty catches, etc.) | ast-grep |
-| Refactoring: find all sites matching a code shape | ast-grep |
-| Hybrid: discover files then extract structure | repomix → ast-grep |
-
-The `repo-auth`, `repo-routes`, `repo-models` commands use both in sequence: repomix to discover which files are relevant, ast-grep to extract precise structural details from those files.
-
-### context7 vs gh_grep
+### context7 — when to use
 
 | Situation | Use |
 |---|---|
 | Official API reference | context7 |
 | How-to guides and tutorials | context7 |
 | Migration guides between versions | context7 |
-| How the community actually uses something | gh_grep |
-| Debugging: find real solutions to an error | gh_grep |
-| Validate if docs match real-world usage | both (`/gh-docs`) |
+
+### ast-grep — when to use
+
+| Situation | Use |
+|---|---|
+| Finding all usages of a specific function/class | ast-grep |
+| Detecting structural anti-patterns (empty catches, etc.) | ast-grep |
+| Refactoring: find all sites matching a code shape | ast-grep |
 
 ### memory — what to store
 
@@ -127,54 +79,42 @@ Good candidates:
 
 ## OpenSpec Workflow Integration
 
-This setup is designed around [OpenSpec](https://github.com/Fission-AI/OpenSpec): the shared OpenCode config provides research, codebase-analysis, memory, and review tools that support the spec workflow before and after `/opsx:*` commands.
+This setup is designed around [OpenSpec](https://github.com/Fission-AI/OpenSpec): the shared OpenCode config provides documentation lookup, code search, and memory tools that support the spec workflow before and after `/opsx:*` commands.
 
 ### Recommended workflow — new feature
 
 ```
-1. /repo-overview          → understand the codebase before writing specs
-2. /opsx:propose           → create proposal, specs, design, tasks
-3. /c7-how or /gh-docs     → research before implementing
-4. /opsx:apply             → implement (clear context first)
-5. spec-review skill      → verify implementation against tasks.md + code audit
-6. /opsx:archive           → archive the completed change
+1. /c7-how              → research implementation approaches before designing
+2. /opsx:propose        → create proposal, specs, design, tasks
+3. /opsx:apply          → implement
+4. spec-review skill    → verify implementation against tasks.md + code audit
+5. /opsx:archive        → archive the completed change
 ```
 
 ### Recommended workflow — brownfield feature
 
-OpenSpec does not have a built-in codebase ingestion step. Our `repo-*` commands fill that gap before the spec phase:
-
 ```
-1. /repo-overview          → map existing structure, tech stack, entry points
-2. /repo-auth              → understand existing auth before touching it
-3. /repo-routes            → map existing endpoints to avoid collisions
-4. /repo-models            → understand the data model before changing it
-5. /mem-save               → save key findings (patterns, conventions, gotchas)
+1. /ast-find <symbol>   → understand existing code patterns
+2. /mem-save            → save key findings (patterns, conventions, gotchas)
+3. /opsx:propose        → write spec informed by what actually exists
+4. /opsx:apply          → implement
+5. spec-review skill    → verify + code audit
+6. /opsx:archive
 ```
-
-```
-6. /opsx:propose           → write spec informed by what actually exists
-7. /opsx:apply             → implement
-8. spec-review skill      → verify + code audit
-9. /opsx:archive
-```
-
-Before `/opsx:propose` on a brownfield project, seed `openspec/config.yaml` with the architecture constraints and conventions you discovered from the `repo-*` exploration steps above.
 
 ### Recommended workflow — bug fix
 
 For bugs, skip the full spec pipeline. Diagnose first, then run a minimal spec:
 
 ```
-1. Investigate             → trace the root cause (explore or plain conversation)
-2. /ast-find <symbol>      → find all call sites and definitions involved
-3. /repo-errors            → check if related error handling issues exist nearby
+1. Investigate          → trace the root cause (explore or plain conversation)
+2. /ast-find <symbol>   → find all call sites and definitions involved
 ```
 
 ```
-4. /opsx:propose fix-<name> → minimal proposal: what's wrong, what the fix is, tasks
-5. /opsx:apply             → fix
-6. /opsx:archive
+3. /opsx:propose fix-<name> → minimal proposal: what's wrong, what the fix is, tasks
+4. /opsx:apply          → fix
+5. /opsx:archive
 ```
 
 Skip `/opsx:verify` for small fixes unless the bug touched shared infrastructure.
@@ -183,22 +123,18 @@ For small bug fixes, keep the OpenSpec loop narrow: diagnose first, then run `/o
 
 ### Context hygiene
 
-OpenSpec benefits from a clean context window before implementing. The heavy MCP tools (repomix, ast-grep) add significant tokens. Since all `repo-*` commands use `subtask: true`, they run in isolated contexts and don't pollute your implementation session.
-
 `mem-*` commands use `subtask: false` intentionally — recalled memory needs to be visible in the active session.
 
 ### DCP plugin
 
 The shared config includes `@tarquinen/opencode-dcp@latest`. It adds dynamic context pruning features such as selective compression, duplicate-call cleanup, and `/dcp` inspection commands, which makes long research-heavy sessions easier to manage.
 
-It is an opinionated default for this repo rather than a hard requirement. Most `repo-*` commands already isolate heavy work in subtasks, so DCP mainly helps the main session between exploration, planning, and review steps.
+It is an opinionated default for this repo. If that tradeoff is not worth it for you, tune `~/.config/opencode/dcp.jsonc` or remove the plugin from your personal config.
 
 Tradeoffs to know:
 - It can reduce prompt-cache efficiency compared with vanilla OpenCode
 - Prune notifications can feel noisy in chat depending on your settings
 - By default it mainly helps the parent session, not every subtask flow
-
-If that tradeoff is not worth it for you, tune `~/.config/opencode/dcp.jsonc` or remove the plugin from your personal config.
 
 ### AGENTS.md — global rules
 
@@ -207,10 +143,8 @@ OpenCode loads `~/.config/opencode/AGENTS.md` on every session, across all proje
 Our global `AGENTS.md` encodes:
 
 - **Session start**: run `/mem-recall` before anything else on an existing project
-- **Multi-step tasks**: always use `sequential-thinking` before acting on anything with more than 2 steps
-- **Research**: use `context7` for official docs, `gh_grep` for real-world patterns
-- **Codebase exploration**: use `repomix` for broad discovery, `ast-grep` for precise queries
-- **OpenSpec**: always run `repo-*` commands and seed `config.yaml` before `/opsx:propose` on brownfield; use lightweight pipeline for bugs
+- **Research**: use `context7` for official docs
+- **Codebase exploration**: use `ast-grep` for precise structural queries
 - **After implementing**: load the `spec-review` skill before archiving
 - **Memory**: save decisions, conventions, and gotchas whenever discovered
 
@@ -227,17 +161,6 @@ cp agents/openspec.md ~/.config/opencode/AGENTS.md
 ```
 
 Use a project `AGENTS.md` separately when you want repo-specific rules committed for the team.
-
-### AGENTS.md — project tip
-
-Add this to a project's `AGENTS.md` to reinforce the sequential thinking habit at the project level:
-
-```md
-When implementing a feature, refactoring, or solving a bug with more than
-2 steps, use the sequential-thinking tool to plan before acting.
-
-When you need to search docs, use context7 tools.
-```
 
 ### Project config tips
 

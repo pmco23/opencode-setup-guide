@@ -67,7 +67,12 @@ context: |
   State management uses Zustand. Styling uses Tailwind CSS.
 ```
 
-Also run `/repo-overview`, `/repo-auth`, `/repo-routes`, and `/repo-models` before your first `/opsx:propose` to give the agent codebase context. Save key findings with `/mem-save`.
+Before your first `/opsx:propose`, explore the codebase to seed this context:
+
+1. **Direct investigation**: Use the codebase itself — read `package.json`, browse key directories, and understand the stack
+2. **Structural search with `/ast-find`**: Find auth patterns, routing conventions, data models
+3. **Save findings with `/mem-save`**: Capture what you learn for future sessions
+4. **Seed `config.yaml`**: Encode the architecture decisions so generated artifacts respect them
 
 ---
 
@@ -117,17 +122,14 @@ Or jump straight in:
 
 ### Existing (brownfield) projects
 
-Don't start with `/opsx:propose` on an unfamiliar codebase — the spec will be generic. Run these first in OpenCode:
+Don't start with `/opsx:propose` on an unfamiliar codebase — the spec will be generic. Explore first:
 
-```
-/repo-overview
-/repo-auth
-/repo-routes
-/repo-models
-/mem-save <key findings about the architecture>
-```
+1. **Understand the stack**: Read `package.json` (or `pyproject.toml`, `Cargo.toml`, etc.) and key config files
+2. **Find key patterns with `/ast-find`**: Search for auth, routing, and data model patterns
+3. **Save learnings with `/mem-save`**: Record what matters for future sessions
+4. **Seed `openspec/config.yaml`**: Document the architecture
 
-Then seed `openspec/config.yaml` with what you learned (see step 2), and only then run `/opsx:propose`.
+Only then run `/opsx:propose`.
 
 ### Bug fixes
 

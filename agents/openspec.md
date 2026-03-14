@@ -11,35 +11,26 @@ This restores saved decisions, conventions, and gotchas from previous sessions w
 
 ---
 
-## Multi-step tasks
-
-When implementing a feature, refactoring, or debugging something with more than 2 steps,
-use the `sequential-thinking` MCP tool to plan before acting.
-
----
-
 ## Researching libraries
 
-- For official API references and how-to questions, use the `context7` MCP tools (`resolve-library-id` + `query-docs`)
-- For real-world usage patterns and debugging errors, use the `gh_grep` MCP tool
-- When both are relevant (validating docs against real usage), run both
+- For official API references and how-to questions, use `context7` MCP tools (`resolve-library-id` + `query-docs`) via `/c7-docs`, `/c7-how`, `/c7-api`
 
 ---
 
 ## Exploring the codebase
 
-- Use `repomix` (`pack_codebase`) for broad discovery: file structure, topic searches, config values, comments
-- Use `ast-grep` for precise structural queries: function definitions, call sites, imports, anti-patterns
-- For unfamiliar codebases, run `/repo-overview` before writing any code or proposals
+- Use `ast-grep` via `/ast-find` for precise structural queries: function definitions, call sites, imports, anti-patterns
+- For unfamiliar codebases, explore key files directly before writing any code or proposals
 
 ---
 
 ## OpenSpec workflow
 
 Before running `/opsx:propose` on an existing codebase:
-1. Run `/repo-overview`, `/repo-auth`, `/repo-routes`, `/repo-models` to map what exists
-2. Save key findings with `/mem-save`
-3. Seed `openspec/config.yaml` with architecture conventions before generating artifacts
+1. Explore the codebase directly — read config files, browse key directories
+2. Use `/ast-find` to discover auth, routing, and data model patterns
+3. Save key findings with `/mem-save`
+4. Seed `openspec/config.yaml` with architecture conventions before generating artifacts
 
 For bug fixes, skip the full spec pipeline: use `/opsx:explore` to diagnose first,
 then `/opsx:propose fix-<name>` with a minimal tasks.md (1-3 tasks).

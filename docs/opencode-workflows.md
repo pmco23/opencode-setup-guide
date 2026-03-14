@@ -2,7 +2,7 @@
 
 Concrete end-to-end workflows showing how to combine commands for common development scenarios.
 
-For the full command references, see [opencode-commands.md](./opencode-commands.md) for shared `/repo-*`, `/ast-*`, `/gh-*`, `/c7-*`, and `/mem-*` commands, plus [openspec-commands.md](./openspec-commands.md) for OpenSpec commands.
+For the full command references, see [opencode-commands.md](./opencode-commands.md) for `/c7-*` and `/mem-*` commands, plus [openspec-commands.md](./openspec-commands.md) for OpenSpec commands.
 
 ---
 
@@ -10,33 +10,31 @@ For the full command references, see [opencode-commands.md](./opencode-commands.
 
 You've just cloned a repo you've never seen before.
 
-```
-/repo-overview
-```
-Get a high-level map: purpose, directory layout, technologies, entry points.
+Start with direct investigation using the codebase itself:
 
-> Shared `/repo-*`, `/ast-*`, `/gh-*`, `/c7-*`, and `/mem-*` commands are documented in [opencode-commands.md](./opencode-commands.md).
+```bash
+# Read the README and key config files
+ls -la
+cat package.json  # or pyproject.toml, Cargo.toml, etc.
+cat README.md
+```
 
-```
-/repo-stats
-```
-Understand scale — how many files, token count, largest files.
+Understand the purpose, technologies, and entry points.
 
-```
-/repo-export
-```
-Optional when you want a reusable XML snapshot on disk for a future session, a handoff, or another tool. Use `/repo-export-slim` instead if you want a smaller structural snapshot, or pass a custom path such as `/repo-export artifacts/backend.xml`.
+Use `/ast-find` to discover key patterns:
 
 ```
-/repo-auth
-/repo-routes
-/repo-models
+/ast-find main
+/ast-find router
+/ast-find handler
 ```
-Deep-dive the three pillars: who can do what, what endpoints exist, what data looks like.
+
+Find the core concepts and entry points.
 
 ```
 /mem-save this project uses X for auth, Y ORM, REST API in src/routes/
 ```
+
 Save key findings so you don't have to re-derive them next session.
 
 ---
@@ -46,35 +44,39 @@ Save key findings so you don't have to re-derive them next session.
 Clear requirements, straightforward feature. Stay on the shortest OpenSpec path from context to archive.
 
 ```
-/repo-overview
-/repo-pack-slim
+/ast-find handler
 ```
-Understand the codebase before writing a proposal. Pack-slim gives you a compressed structural view.
+
+Find relevant handlers or entry points to understand where your feature fits.
 
 ```
 /opsx:propose add user notification preferences
 ```
+
 Create the full OpenSpec artifact set in one pass: `proposal.md`, `specs/`, `design.md`, and `tasks.md`. Review and tighten anything that looks off before implementation.
 
 ```
 /c7-how store user preferences in postgres with drizzle-orm
-/gh-docs drizzle-orm insert and update
 ```
+
 Research the implementation approach without polluting the main context window.
 
 ```
 /opsx:apply
 ```
+
 Implement in a clean context window. Work through `tasks.md` task by task and check them off as you go.
 
 ```
 /opsx:verify
 ```
+
 Validate completeness, correctness, and coherence against the artifacts before you close the change.
 
 ```
 spec-review skill
 ```
+
 Optional second pass to catch debug leftovers, hardcoded secrets, and empty catches.
 
 > `spec-review` is a skill, not a slash command. Ask the agent: _"Load the spec-review skill and review the add-user-notification-preferences change"_
@@ -82,6 +84,7 @@ Optional second pass to catch debug leftovers, hardcoded secrets, and empty catc
 ```
 /opsx:archive
 ```
+
 Sync delta specs and move the change into `openspec/changes/archive/`.
 
 ---
@@ -93,6 +96,7 @@ Requirements are fuzzy or the feature is complex. Explore first, then move throu
 ```
 /opsx:explore how should we structure the notification preferences?
 ```
+
 Investigate the codebase, compare approaches, and clarify requirements before generating artifacts.
 
 Once direction is clear:
@@ -100,39 +104,45 @@ Once direction is clear:
 ```
 /opsx:new add-notification-preferences
 ```
+
 Create the change folder and metadata only.
 
 ```
 /opsx:continue
 ```
+
 Generate the first ready artifact (`proposal.md`). Review and edit it.
 
 ```
 /opsx:continue
 ```
+
 Generate the next artifact in dependency order (`specs/`). Review again.
 
 ```
 /opsx:continue
 /opsx:continue
 ```
+
 Keep going until all planning artifacts are ready (`design.md`, then `tasks.md`).
 
 ```
 /c7-how store user preferences in postgres with drizzle-orm
-/gh-docs drizzle-orm insert and update
 ```
+
 Use shared research commands anywhere along the path when you need implementation detail before locking the plan.
 
 ```
 /opsx:apply
 ```
+
 Implement in a clean context once the artifacts are stable.
 
 ```
 /opsx:verify
 /opsx:archive
 ```
+
 Verify the change, then archive it.
 
 ---
@@ -146,11 +156,13 @@ You've been running multiple OpenSpec changes in parallel and want to close them
 /opsx:verify add-dark-mode
 /opsx:verify update-footer
 ```
+
 Verify each change independently first so gaps surface before archive time.
 
 ```
 /opsx:bulk-archive
 ```
+
 List completed changes, detect spec conflicts, reconcile them against the actual codebase, and archive in chronological order.
 
 If verification finds gaps, fix the relevant artifact or implementation, then rerun `/opsx:verify` before archiving.
@@ -161,21 +173,28 @@ If verification finds gaps, fix the relevant artifact or implementation, then re
 
 You need to add something new to a codebase you didn't write. Map what exists before you write the change.
 
+Explore the codebase directly:
+
+```bash
+# Understand structure
+find . -type f -name "*.ts" | head -20
+cat package.json
 ```
-/repo-overview
-```
-Understand the structure, stack, and entry points before touching anything.
+
+Use `/ast-find` to locate key patterns:
 
 ```
-/repo-auth
-/repo-routes
-/repo-models
+/ast-find authenticate
+/ast-find router
+/ast-find schema
 ```
-Map the three pillars: existing auth patterns, live endpoints, and the data model.
+
+Find authentication, routing, and data model patterns.
 
 ```
 /mem-save this project uses JWT in src/middleware/auth.ts, Prisma ORM, REST API under src/routes/
 ```
+
 Save conventions and gotchas so you don't have to re-derive them next session.
 
 Seed `openspec/config.yaml` with what you found — see [openspec-install.md § Brownfield projects](./openspec-install.md#brownfield-projects-seed-configyaml-first) for the format. This acts like a project constitution: generated artifacts should respect the constraints you encode there.
@@ -183,27 +202,31 @@ Seed `openspec/config.yaml` with what you found — see [openspec-install.md § 
 ```
 /opsx:propose add invoice export to PDF
 ```
+
 Write the change against what actually exists. OpenSpec uses your `config.yaml` context.
 
 ```
 /c7-how generate PDFs in node.js with pdfkit
-/gh-docs pdfkit text and tables
 ```
+
 Research the implementation approach as subtasks.
 
 ```
 /opsx:apply
 ```
+
 Implement in a clean context window. Work through `tasks.md` task by task.
 
 ```
 /opsx:verify
 ```
+
 Validate completeness against the spec before closing the change.
 
 ```
 spec-review skill
 ```
+
 Optional quality pass for debug leftovers, hardcoded secrets, and empty catches.
 
 > Ask the agent: _"Load the spec-review skill and review the add-invoice-export-to-pdf change"_
@@ -221,39 +244,39 @@ You have a bug report or failing test. Keep the OpenSpec path narrow and focused
 ```
 /opsx:explore user sessions are expiring too early even with valid tokens
 ```
+
 Investigate the codebase and trace the root cause before creating artifacts.
 
 ```
 /ast-find verifyToken
 ```
+
 Find all call sites and definitions of the suspected function to understand scope.
 
 ```
-/repo-errors
+/c7-docs jsonwebtoken verify options
 ```
-Check for related error handling issues nearby — bugs often have swallowed siblings.
 
-```
-/c7-fix jsonwebtoken verify options ignoreExpiration
-/gh-fix jwt token expiry validation node.js
-```
-Look up known solutions if the bug is library-related.
+Check official docs for the relevant library behavior.
 
 Once the root cause is confirmed:
 
 ```
 /opsx:propose fix-session-expiry
 ```
+
 Write a minimal proposal describing the bug, the fix, and a short `tasks.md` list. For a small fix, you usually do not need a heavyweight design.
 
 ```
 /opsx:apply
 ```
+
 Fix it in a clean context.
 
 ```
 /opsx:archive
 ```
+
 Skip `/opsx:verify` for a tiny single-file fix. Run it if the bug touched shared infrastructure or has side effects across modules.
 
 ---
@@ -265,18 +288,15 @@ Starting a new session on a project you've worked on before.
 ```
 /mem-recall
 ```
-Restore saved decisions, conventions, and gotchas from previous sessions without re-reading the codebase.
 
-```
-/repo-overview
-```
-Re-orient quickly if needed.
+Restore saved decisions, conventions, and gotchas from previous sessions without re-reading the codebase.
 
 Proceed with implementation. At the end of the session:
 
 ```
 /mem-save we decided to use optimistic updates in the notifications UI
 ```
+
 Capture new decisions for next time.
 
 ---
@@ -286,24 +306,22 @@ Capture new decisions for next time.
 You have an error message or stack trace.
 
 ```
-/c7-fix TypeError: Cannot read properties of undefined (reading 'map')
+/c7-docs TypeError react map undefined
 ```
-Check the official docs for what could cause this in the relevant library.
 
-```
-/gh-fix TypeError: Cannot read properties of undefined reading map react
-```
-Find how others solved the same error in real codebases.
+Look up what could cause this in the relevant framework or library docs.
 
 ```
 /ast-find processNotifications
 ```
+
 Find all call sites and definitions of the suspected function in your codebase.
 
 ```
-/repo-errors
+/ast-find map
 ```
-Audit the broader error handling and look for related swallowed failures.
+
+Broaden the search if the first target was too narrow.
 
 ---
 
@@ -314,22 +332,20 @@ You want to add a library you haven't used before.
 ```
 /c7-docs zod
 ```
+
 Get the official overview: what it is, core concepts, basic usage.
 
 ```
 /c7-how validate nested objects with zod
 ```
+
 Targeted how-to for your specific use case.
 
 ```
-/gh-examples zod schema validation with express middleware
+/c7-api zod transform
 ```
-See how production codebases integrate it, not just toy examples.
 
-```
-/gh-docs zod transform and refine
-```
-Combine official docs with real-world usage for the APIs you'll actually use.
+Detailed API documentation for specific methods.
 
 ---
 
@@ -340,88 +356,54 @@ You want to rename a function or change a pattern across the codebase.
 ```
 /ast-find fetchUserData
 ```
+
 Find every definition, call site, and import of the target symbol.
 
 ```
-/ast-refactor fetchUserData(userId)
+/ast-find fetchUserData(userId)
 ```
-Find all sites that match the current call shape so you know exactly what needs to change.
+
+Find all sites with a specific call pattern to plan precise changes.
 
 ```
-/ast useCallback($$$ARGS)
+/mem-save refactoring fetchUserData -> getUserData in progress, src/api/ done, src/handlers/ pending
 ```
-Run a broader structural search to verify you did not miss a related pattern.
 
-```
-/repo-review
-```
-After the refactor, catch TODOs, debug code, or type annotation gaps introduced along the way.
+Track refactoring progress for complex multi-file changes.
 
 ---
 
-## 11. Upgrading a Dependency
-
-Moving from one major version to another.
-
-```
-/c7-migrate next.js 14 to 15
-```
-Read the official migration guide: breaking changes, new APIs, and deprecations.
-
-```
-/gh-pattern next.js 15 app router
-```
-See how the community has already updated real projects.
-
-```
-/ast-find useRouter
-```
-Find all usages of the old API in your codebase to understand migration scope.
-
-```
-/repo-errors
-```
-After upgrading, check whether new error patterns were introduced.
-
----
-
-## 12. Pre-commit Code Audit
+## 11. Pre-commit Code Audit
 
 Before opening a PR, make sure the code is clean.
 
-```
-/repo-review
-```
-Run a full audit for tech debt markers, debug leftovers, potential secrets, empty catches, and missing return types. Fix everything flagged as Critical or High.
+Run the `spec-review` skill:
 
-If you worked through OpenSpec artifacts, also run:
+_"Load the spec-review skill and review the current change"_
 
-- _"Load the spec-review skill and review the current change"_
+This catches debug leftovers, hardcoded credentials, empty catches, and missing return types.
 
 ---
 
-## 13. Investigating an Unfamiliar Pattern
+## 12. Investigating an Unfamiliar Pattern
 
 You see a pattern in the codebase you don't recognize.
 
 ```
 /ast-find createServerAction
 ```
-Find all usages in the current codebase to understand how it is being used locally.
 
-```
-/gh-examples createServerAction next.js
-```
-See real-world examples from other projects for broader context.
+Find all usages in the current codebase to understand how it is being used locally.
 
 ```
 /c7-docs next.js server actions
 ```
+
 Get the official explanation.
 
 ---
 
-## 14. Saving Institutional Knowledge
+## 13. Saving Institutional Knowledge
 
 Capturing important decisions and conventions for the team (or future you).
 
@@ -437,4 +419,5 @@ At the start of any new session:
 ```
 /mem-recall
 ```
+
 All of the above is immediately available without re-reading docs or code.

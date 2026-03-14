@@ -8,8 +8,7 @@ This repo focuses on the shared OpenCode configuration (MCP servers, custom comm
 
 ## Shared Prerequisites
 
-- Node.js is required for the shared OpenCode config (`repomix`, `memory`, `sequential-thinking`)
-- Docker is optional and only needed for shared `/ast-*` commands
+- Node.js is required for the shared OpenCode config (`memory`)
 - OpenSpec adds the `/opsx:*` command workflow on top of the shared OpenCode setup
 
 ---
@@ -64,6 +63,6 @@ See [spec-review usage](docs/opencode-commands.md#spec-review--openspec-verifica
 |---|---|
 | [opencode-setup.md](docs/opencode-setup.md) | MCP servers, tool design principles, workflow integration |
 | [openspec-install.md](docs/openspec-install.md) | Install OpenSpec, enable extended workflow profile, brownfield seeding |
-| [opencode-commands.md](docs/opencode-commands.md) | All custom `/repo-*`, `/ast-*`, `/gh-*`, `/c7-*`, `/mem-*` commands and review skills |
+| [opencode-commands.md](docs/opencode-commands.md) | Custom commands (`/c7-*`, `/mem-*`, `/ast-find`) and review skills |
 | [openspec-commands.md](docs/openspec-commands.md) | All `/opsx:*` commands |
 | [opencode-workflows.md](docs/opencode-workflows.md) | End-to-end workflows combining OpenCode with OpenSpec |
