@@ -6,14 +6,6 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
     },
-    "gh_grep": {
-      "type": "remote",
-      "url": "https://mcp.grep.app"
-    },
-    "repomix": {
-      "type": "local",
-      "command": ["npx", "-y", "repomix", "--mcp"]
-    },
     "ast-grep": {
       "type": "local",
       "command": ["sh", "-c", "docker run -i --rm -v \"$(pwd):/src\" mcp/ast-grep"]
@@ -21,117 +13,14 @@
     "memory": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-memory"]
-    },
-    "sequential-thinking": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
     }
   },
   "command": {
-
-    "repo-overview": {
-      "description": "Overview the current project structure and purpose",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory. Report the metrics (file count, total tokens, largest files). Then read the file tree section and provide a structured overview: project purpose, directory layout, key entry points, technologies used, and any notable architectural patterns or concerns.",
-      "subtask": true
-    },
-    "repo-stats": {
-      "description": "Show file count, token count and size metrics",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory. Report the full metrics summary: total files, total characters, total tokens, top largest files by size, and a breakdown by file type if visible.",
-      "subtask": true
-    },
-    "repo-pack": {
-      "description": "Full repomix snapshot for in-session analysis",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory. Treat the packed result as in-session analysis output, not a guaranteed file on disk. Report the metrics (file count, total tokens, largest files). Then provide a brief overview of the project structure.",
-      "subtask": true
-    },
-    "repo-pack-slim": {
-      "description": "Compressed repomix snapshot for in-session analysis",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory with `compress: true`. Treat the packed result as in-session analysis output, not a guaranteed file on disk. Report the metrics (file count, total tokens, largest files, and any compression savings if visible). Then provide a structural overview: key modules, exported functions/classes, and overall architecture.",
-      "subtask": true
-    },
-    "repo-export": {
-      "description": "Export a full repomix XML snapshot to disk",
-      "template": "Use the Bash tool to export the current working directory with the Repomix CLI. If `$ARGUMENTS` is provided, use it as the output path; otherwise default to `./repomix-output.xml`. Ensure the destination directory exists, then run `npx -y repomix@latest --style xml -o <path>`. Report the final output path and the key metrics from the Repomix CLI summary.",
-      "subtask": true
-    },
-    "repo-export-slim": {
-      "description": "Export a compressed repomix XML snapshot to disk",
-      "template": "Use the Bash tool to export the current working directory with the Repomix CLI. If `$ARGUMENTS` is provided, use it as the output path; otherwise default to `./repomix-output-slim.xml`. Ensure the destination directory exists, then run `npx -y repomix@latest --compress --style xml -o <path>`. Report the final output path and the key metrics from the Repomix CLI summary, including any visible compression savings.",
-      "subtask": true
-    },
-    "repo-search": {
-      "description": "Text search across codebase (strings, comments, config values)",
-      "template": "Use the repomix MCP tool `pack_codebase` to pack the current working directory. Then use `grep_repomix_output` to search for the text pattern: $ARGUMENTS. Use this for searching strings, comments, config values, or natural language — things that don't have code structure. Show matching lines with 3 lines of context, grouped by file.",
-      "subtask": true
-    },
-    "repo-auth": {
-      "description": "Map all authentication and authorization code",
-      "template": "Step 1 — Use the repomix MCP tool `pack_codebase` to pack the current working directory. Use `grep_repomix_output` to search for 'auth|login|logout|token|jwt|session|password|permission|role' to identify which files contain authentication and authorization logic. List those files.\n\nStep 2 — Use the ast-grep MCP tool to search those files for structural patterns: function definitions with 'auth' or 'login' in their name, calls to auth-related functions, and import statements for auth libraries. Group by file and describe the role each plays in the auth flow.",
-      "subtask": true
-    },
-    "repo-routes": {
-      "description": "Map all API routes and HTTP endpoint definitions",
-      "template": "Step 1 — Use the repomix MCP tool `pack_codebase` to pack the current working directory. Use `grep_repomix_output` to search for 'router|route|@Get|@Post|@Put|@Delete|@Patch|app.get|app.post|app.put|app.delete' to identify which files define routes or endpoints. List those files.\n\nStep 2 — Use the ast-grep MCP tool to extract the precise route definitions from those files: method, path, and handler name. Produce a clean summary table of all endpoints found.",
-      "subtask": true
-    },
-    "repo-models": {
-      "description": "Map all database models and schema definitions",
-      "template": "Step 1 — Use the repomix MCP tool `pack_codebase` to pack the current working directory. Use `grep_repomix_output` to search for 'model|schema|entity|defineModel|createSchema|mongoose|sequelize|prisma|typeorm' to identify which files define data models or schemas. List those files.\n\nStep 2 — Use the ast-grep MCP tool to extract the structural definitions from those files: class names, exported objects, field names and types. Summarize the data model layout.",
-      "subtask": true
-    },
-    "repo-errors": {
-      "description": "Audit all error handling patterns in the codebase",
-      "template": "Use the ast-grep MCP tool to audit error handling across the codebase. Search for: (1) empty catch blocks — `try { $$ } catch($E) {}`, (2) catch blocks that only reassign or log without rethrowing — `catch($E) { console.$METHOD($$$) }`, (3) unhandled promise rejections — `.catch($F)` where the handler is trivial, (4) throw statements to map what errors are raised. Group findings by severity: silent failures first, then logged-only, then properly handled. Report file and line for each.",
-      "subtask": true
-    },
-    "repo-review": {
-      "description": "Full code review: repomix text scan + ast-grep structural audit",
-      "template": "Perform a thorough code review in two passes:\n\nPass 1 (repomix — text patterns): Use the repomix MCP tool `pack_codebase` to pack the current working directory. Use `grep_repomix_output` to scan for: (1) 'TODO|FIXME|HACK|XXX' — tech debt, (2) 'console.log|debugger|print(' — debug leftovers, (3) 'password|secret|api_key|apikey|private_key' — potential hardcoded secrets.\n\nPass 2 (ast-grep — structural patterns): Use the ast-grep MCP tool to find: (1) empty catch blocks, (2) functions longer than reasonable (many statements), (3) duplicate code shapes, (4) missing return type annotations on exported functions.\n\nProduce a single prioritized report: Critical (secrets, empty catches) → High (debug code, missing types) → Medium (tech debt, long functions). Include file and line references for every finding.",
-      "subtask": true
-    },
-
-    "ast": {
-      "description": "Structural AST search with ast-grep pattern",
-      "template": "Use the ast-grep MCP tool to search the current working directory for the AST pattern: $ARGUMENTS. Show all matches grouped by file, with surrounding context to understand each usage.",
-      "subtask": true
-    },
     "ast-find": {
       "description": "Find all definitions, calls, and imports of a symbol",
       "template": "Use the ast-grep MCP tool to search the current working directory for all usages of: $ARGUMENTS. Run multiple patterns to capture: function/class definitions, call sites, and import statements. Group results by file and summarize the usage patterns.",
       "subtask": true
     },
-    "ast-lang": {
-      "description": "Structural AST search scoped to a specific language",
-      "template": "Use the ast-grep MCP tool to search the current working directory. Input format is '<lang> <pattern>', e.g. 'typescript async function $FUNC($$$ARGS)'. Parse the first word as the language and the rest as the AST pattern. Report all matches grouped by file.",
-      "subtask": true
-    },
-    "ast-refactor": {
-      "description": "Find all sites matching a refactoring target pattern",
-      "template": "Use the ast-grep MCP tool to find all occurrences in the current working directory matching this refactoring target: $ARGUMENTS. List every file and location that would need to be updated, and suggest what the replacement should look like.",
-      "subtask": true
-    },
-
-    "gh-examples": {
-      "description": "Find real-world usage examples on GitHub",
-      "template": "Use the gh_grep MCP tool to search public GitHub repositories for real-world examples of: $ARGUMENTS. Search for the most relevant code patterns — try 2-3 variations if needed. Show the best examples with their repository context, and summarize the common patterns you observe across them.",
-      "subtask": true
-    },
-    "gh-pattern": {
-      "description": "Find how a specific code pattern is used across GitHub projects",
-      "template": "Use the gh_grep MCP tool to search public GitHub repositories for real-world usage of this code pattern: $ARGUMENTS. Focus on finding diverse, high-quality examples from reputable projects. Summarize: what parameters/options people commonly use, what they pair it with, and any non-obvious patterns.",
-      "subtask": true
-    },
-    "gh-fix": {
-      "description": "Find real-world solutions to an error or problem on GitHub",
-      "template": "I am encountering the following error or problem:\n\n$ARGUMENTS\n\nUse the gh_grep MCP tool to search public GitHub repositories for how others have solved or worked around this. Search for the error message, relevant function names, or related patterns. Show examples of working solutions and summarize the most common fix.",
-      "subtask": true
-    },
-    "gh-docs": {
-      "description": "Official docs (Context7) + real-world usage (GitHub) combined",
-      "template": "I want to understand how to use: $ARGUMENTS\n\nStep 1 (official docs) — Use the context7 MCP tools: resolve the library ID with `resolve-library-id`, then query with `query-docs` for the relevant topic.\n\nStep 2 (real-world usage) — Use the gh_grep MCP tool to search public GitHub repositories for actual production usage of the same API or pattern.\n\nCombine both: show the official API with code examples, then contrast with how the community actually uses it in practice. Highlight any gaps or common patterns not covered by the docs.",
-      "subtask": true
-    },
-
     "c7-docs": {
       "description": "Look up docs for a library using Context7",
       "template": "Use the context7 MCP tools to look up documentation for: $ARGUMENTS. First resolve the library ID with `resolve-library-id`, then query the docs with `query-docs`. Return a clear, concise summary with relevant code examples.",
@@ -145,16 +34,6 @@
     "c7-api": {
       "description": "Look up an API reference via Context7",
       "template": "Use the context7 MCP tools to look up the API reference for $1 in the $2 library. Resolve the library ID with `resolve-library-id`, then query with `query-docs` focused on the API signature, parameters, return values, and usage examples.",
-      "subtask": true
-    },
-    "c7-fix": {
-      "description": "Find docs to fix the current error via Context7",
-      "template": "I am encountering the following error or issue:\n\n$ARGUMENTS\n\nUse the context7 MCP tools to find relevant documentation that helps resolve this. Identify the library involved, resolve its ID with `resolve-library-id`, and query the docs with `query-docs`. Explain the root cause and provide a working code fix.",
-      "subtask": true
-    },
-    "c7-migrate": {
-      "description": "Find a library migration guide via Context7",
-      "template": "Use the context7 MCP tools to find the migration guide for $ARGUMENTS. Resolve the library ID with `resolve-library-id`, then query the docs with `query-docs` asking for breaking changes, migration steps, and updated API usage between versions.",
       "subtask": true
     },
 
